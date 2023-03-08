@@ -8,15 +8,15 @@ const W = [
 ];
 
 const decodeInstruction = (b1: number, b2: number) => {
-  assertEquals(getBits(b1, { least: 2 }), 0b100010);
-  assertEquals(getBits(b2, { least: 6 }), 0b11);
+  assertEquals(getBits(b1, { lsb: 2 }), 0b100010);
+  assertEquals(getBits(b2, { lsb: 6 }), 0b11);
   const d = getBit(b1, 1), SECOND_REG_IS_SOURCE = d;
   const w = getBit(b1, 0), OPERATE_ON_16_BITS = w;
 
   const registers = W[Number(OPERATE_ON_16_BITS)];
 
-  const first_reg = registers[getBits(b2, { most: 5, least: 3 })];
-  const second_reg = registers[getBits(b2, { most: 2, least: 0 })];
+  const first_reg = registers[getBits(b2, { msb: 5, lsb: 3 })];
+  const second_reg = registers[getBits(b2, { msb: 2, lsb: 0 })];
 
   const source = SECOND_REG_IS_SOURCE ? second_reg : first_reg;
   const destination = SECOND_REG_IS_SOURCE ? first_reg : second_reg;

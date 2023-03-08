@@ -3,10 +3,10 @@ import { getBit, getBits, trimListing } from "./utils.ts";
 import { disassemble } from "./disassemble.ts";
 
 Deno.test("get bits inclusive", () => {
-  assertEquals(getBits(0b11101000, { most: 5, least: 3 }), 0b101);
-  assertEquals(getBits(0b11101000, { least: 5 }), 0b111);
-  assertEquals(getBits(0b11101000, { least: 3 }), 0b11101);
-  assertEquals(getBits(0b11101000, { most: 5 }), 0b101000);
+  assertEquals(getBits(0b11101000, { msb: 5, lsb: 3 }), 0b101);
+  assertEquals(getBits(0b11101000, { lsb: 5 }), 0b111);
+  assertEquals(getBits(0b11101000, { lsb: 3 }), 0b11101);
+  assertEquals(getBits(0b11101000, { msb: 5 }), 0b101000);
 });
 
 Deno.test("get bit", () => {

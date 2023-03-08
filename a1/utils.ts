@@ -4,17 +4,17 @@ const ONE = 0b1;
 
 export const getBits = (
   byte: number,
-  { most = 7, least = 0 }: { most?: number; least?: number } = {},
+  { msb = 7, lsb = 0 }: { msb?: number; lsb?: number } = {},
 ): number => {
-  const length = most - least;
+  const length = msb - lsb;
   assert(length >= 0);
-  const mask = ((ONE << (length + 1)) - 1) << least;
-  const masked = (byte & mask) >> least;
+  const mask = ((ONE << (length + 1)) - 1) << lsb;
+  const masked = (byte & mask) >> lsb;
   return masked;
 };
 
 export const getBit = (byte: number, index: number) =>
-  Boolean(getBits(byte, { most: index, least: index }));
+  Boolean(getBits(byte, { msb: index, lsb: index }));
 
 export const trimListing = (listing: string): string =>
   listing.replaceAll(/;.*\n/g, "").trim();
