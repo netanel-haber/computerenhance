@@ -1,5 +1,5 @@
 import { consumer } from "./consumer.ts";
-import { immToReg, regToReg } from "./decoders.ts";
+import { immToReg, regMemory } from "./decoders/mod.ts";
 
 import { getBits, numBits } from "./utils.ts";
 
@@ -18,7 +18,7 @@ export const disassemble = (
   while (pointer < assembly.length) {
     const opByte = assembly[pointer];
     if (opcodeEquals(opByte, TO_REG_FROM_MEM_REG)) {
-      pointer = consume(regToReg, pointer);
+      pointer = consume(regMemory, pointer);
       continue;
     }
     if (opcodeEquals(opByte, IMMEDIATE_TO_REGISTER)) {

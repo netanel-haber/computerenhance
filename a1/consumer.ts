@@ -1,4 +1,4 @@
-import { Decoder } from "./decoders.ts";
+import { Decoder } from "./decoders/mod.ts";
 
 export const consumer = (assembly: Uint8Array, asm: string[]) =>
 (
