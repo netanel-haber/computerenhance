@@ -1,50 +1,61 @@
-import { getBit, getBits } from "../utils.ts";
-import { Decoder, W } from "./common.ts";
+import { assert, assertNotEquals } from "assert";
+import { getBits } from "../utils.ts";
+import { computeSourceDestination, Decoder, getRegisters } from "./common.ts";
 
-const enum Mode {
+const getRegAndRm = (b2: number) => {
+  const reg = getBits(b2, { msb: 5, lsb: 3 });
+  const rm = getBits(b2, { msb: 2, lsb: 0 });
+  return { reg, rm };
+};
+
+function registerMode(b1: number, b2: number) {
+  const { reg, rm } = getRegAndRm(b2);
+  const registers = getRegisters(b1);
+  const { destination, source } = computeSourceDestination(
+    b1,
+    registers[reg],
+    registers[rm],
+  );
+  return [`mov ${destination}, ${source}`, 2] as const;
+}
+
+const RM: Array<[string] | [string, string] | []> = [
+  ["bx", "si"],
+  ["bx", "di"],
+  ["bp", "si"],
+  ["bp", "di"],
+  ["si"],
+  ["di"],
+  [],
+  ["bx"],
+];
+
+function memoryNoDisplacement(b1: number, b2: number) {
+  const registers = getRegisters(b1);
+  const { reg, rm } = getRegAndRm(b2);
+  assertNotEquals(rm, 6);
+
+  const rmStr = RM[rm];
+  const { destination, source } = computeSourceDestination(
+    b1,
+    registers[reg],
+    `[${rmStr.join(" + ")}]`,
+  );
+  return [`mov ${destination}, ${source}`, 2] as const;
+}
+
+enum Mode {
   MEMORY_NO_DISPLACEMENT = 0b00,
   MEMORY_8_DISPLACEMENT = 0b01,
   MEMORY_16_DISPLACEMENT = 0b10,
   REGISTER = 0b11,
 }
-
-const getMode = (byte: number): Mode => getBits(byte, { lsb: 6 });
-
-function registerMode(b1: number, b2: number) {
-  const d = getBit(b1, 1), FIRST_REG_IS_DESTINATION = d;
-  const w = getBit(b1, 0), OPERATE_ON_WORD = w;
-
-  const registers = W[Number(OPERATE_ON_WORD)];
-
-  const first_reg = registers[getBits(b2, { msb: 5, lsb: 3 })];
-  const second_reg = registers[getBits(b2, { msb: 2, lsb: 0 })];
-
-  const source = FIRST_REG_IS_DESTINATION ? second_reg : first_reg;
-  const destination = FIRST_REG_IS_DESTINATION ? first_reg : second_reg;
-
-  return [`mov ${destination}, ${source}`, 2] as const;
-}
-
-function memoryNoDisplacement(b1: number, b2: number) {
-  const d = getBit(b1, 1), FIRST_REG_IS_DESTINATION = d;
-  const w = getBit(b1, 0), OPERATE_ON_WORD = w;
-
-  const registers = W[Number(OPERATE_ON_WORD)];
-
-  const first_reg = registers[getBits(b2, { msb: 5, lsb: 3 })];
-  const second_reg = registers[getBits(b2, { msb: 2, lsb: 0 })];
-
-  const source = FIRST_REG_IS_DESTINATION ? second_reg : first_reg;
-  const destination = FIRST_REG_IS_DESTINATION ? first_reg : second_reg;
-
-  return [`mov ${destination}, ${source}`, 2] as const;
-}
-
 export const regMemory: Decoder = (asm, p) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 
-  const mode = getMode(b2);
+  const mode = getBits(b2, { lsb: 6 });
+  assert(mode in Mode);
 
   switch (mode) {
     case Mode.REGISTER:
@@ -52,5 +63,5 @@ export const regMemory: Decoder = (asm, p) => {
     case Mode.MEMORY_NO_DISPLACEMENT:
       return memoryNoDisplacement(b1, b2);
   }
-  throw new Error("hey");
+  throw new Error(`${mode} not found`);
 };
