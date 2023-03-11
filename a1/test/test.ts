@@ -1,6 +1,6 @@
 import { assertEquals } from "assert";
 import { getBit, getBits, numBits } from "../utils.ts";
-import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledsEqualOriginalAssemebly.ts";
+import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits inclusive", () => {
   assertEquals(getBits(0b11101000, { msb: 5, lsb: 3 }), 0b101);
@@ -23,12 +23,17 @@ Deno.test("num bits", () => {
   assertEquals(numBits(0b00001), 1);
 });
 
-Deno.test("disassembled matches original", async () => {
-  await Promise.all(
-    [
-      "computer_enhance/perfaware/part1/listing_0037_single_register_mov",
-      "computer_enhance/perfaware/part1/listing_0038_many_register_mov",
-      "computer_enhance/perfaware/part1/listing_0039_more_movs",
-    ].map(assertReassembledEqualsOriginalAssembly),
-  );
-});
+Deno.test("disassembled matches original 37", () =>
+  assertReassembledEqualsOriginalAssembly(
+    "computer_enhance/perfaware/part1/listing_0037_single_register_mov",
+  ));
+
+Deno.test("disassembled matches original 38", () =>
+  assertReassembledEqualsOriginalAssembly(
+    "computer_enhance/perfaware/part1/listing_0038_many_register_mov",
+  ));
+
+Deno.test("disassembled matches original 39", () =>
+  assertReassembledEqualsOriginalAssembly(
+    "computer_enhance/perfaware/part1/listing_0039_more_movs",
+  ));

@@ -1,5 +1,5 @@
 import { consumer } from "./consumer.ts";
-import { regToReg } from "./decoders.ts";
+import { immToReg, regToReg } from "./decoders.ts";
 
 import { getBits, numBits } from "./utils.ts";
 
@@ -19,6 +19,10 @@ export const disassemble = (
     const opByte = assembly[pointer];
     if (opcodeEquals(opByte, TO_REG_FROM_MEM_REG)) {
       pointer = consume(regToReg, pointer);
+      continue;
+    }
+    if (opcodeEquals(opByte, IMMEDIATE_TO_REGISTER)) {
+      pointer = consume(immToReg, pointer);
       continue;
     }
     throw new Error(`Could not find decoder for byte ${opByte}`);
