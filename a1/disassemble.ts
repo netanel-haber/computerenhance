@@ -1,45 +1,31 @@
-import { assertEquals } from "assert";
-import { getBit, getBits, numBits } from "./utils.ts";
+import { consume2Bytes } from "./consume.ts";
+import { decodeRegToReg } from "./decoders.ts";
 
-const W = [
-  ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"],
-  ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"],
-];
+import { getBits, numBits } from "./utils.ts";
 
-const MOV_OPCODE = 0b100010;
+const TO_REG_FROM_MEM_REG = 0b100010;
+const IMMEDIATE_TO_REGISTER = 0b1011;
 
-const assertOpcode = (byte: number, expected: number) => {
-  assertEquals(getBits(byte, { lsb: 8 - numBits(expected) }), expected);
-};
-
-const assertMOD = (byte: number, expected: number) => {
-  assertEquals(getBits(byte, { lsb: 6 }), expected);
-};
-
-const decodeRegToReg = (b1: number, b2: number) => {
-  assertOpcode(b1, MOV_OPCODE);
-  assertEquals(getBits(b1, { lsb: 2 }), 0b100010);
-  assertMOD(b2, 0b11);
-  const d = getBit(b1, 1), SECOND_REG_IS_SOURCE = d;
-  const w = getBit(b1, 0), OPERATE_ON_16_BITS = w;
-
-  const registers = W[Number(OPERATE_ON_16_BITS)];
-
-  const first_reg = registers[getBits(b2, { msb: 5, lsb: 3 })];
-  const second_reg = registers[getBits(b2, { msb: 2, lsb: 0 })];
-
-  const source = SECOND_REG_IS_SOURCE ? second_reg : first_reg;
-  const destination = SECOND_REG_IS_SOURCE ? first_reg : second_reg;
-
-  return `mov ${destination}, ${source}`;
-};
+const opcodeEquals = (byte: number, expected: number) =>
+  getBits(byte, { lsb: 8 - numBits(expected) }) === expected;
 
 export const disassemble = (
   assembly: Uint8Array,
 ): string => {
-  let asm = "bits 16\n";
-  for (let i = 0; i < assembly.length; i += 2) {
-    asm += "\n" + decodeRegToReg(assembly[i], assembly[i + 1]);
+  const asm = ["bits 16\n"];
+  let pointer = 0;
+  while (pointer < assembly.length) {
+    const opByte = assembly[pointer];
+    if (opcodeEquals(opByte, TO_REG_FROM_MEM_REG)) {
+      pointer = consume2Bytes({
+        asm,
+        pointer,
+        assembly,
+        decode: decodeRegToReg,
+      });
+      continue;
+    }
+    throw new Error(`Could not find decoder for byte ${opByte}`);
   }
-  return asm;
+  return asm.join("\n");
 };
