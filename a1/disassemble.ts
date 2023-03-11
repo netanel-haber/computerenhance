@@ -1,14 +1,25 @@
 import { assertEquals } from "assert";
-import { getBit, getBits } from "./utils.ts";
+import { getBit, getBits, numBits } from "./utils.ts";
 
 const W = [
   ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"],
   ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"],
 ];
 
-const decodeInstruction = (b1: number, b2: number) => {
+const MOV_OPCODE = 0b100010;
+
+const assertOpcode = (byte: number, expected: number) => {
+  assertEquals(getBits(byte, { lsb: 8 - numBits(expected) }), expected);
+};
+
+const assertMOD = (byte: number, expected: number) => {
+  assertEquals(getBits(byte, { lsb: 6 }), expected);
+};
+
+const decodeRegToReg = (b1: number, b2: number) => {
+  assertOpcode(b1, MOV_OPCODE);
   assertEquals(getBits(b1, { lsb: 2 }), 0b100010);
-  assertEquals(getBits(b2, { lsb: 6 }), 0b11);
+  assertMOD(b2, 0b11);
   const d = getBit(b1, 1), SECOND_REG_IS_SOURCE = d;
   const w = getBit(b1, 0), OPERATE_ON_16_BITS = w;
 
@@ -28,7 +39,7 @@ export const disassemble = (
 ): string => {
   let asm = "bits 16\n";
   for (let i = 0; i < assembly.length; i += 2) {
-    asm += "\n" + decodeInstruction(assembly[i], assembly[i + 1]);
+    asm += "\n" + decodeRegToReg(assembly[i], assembly[i + 1]);
   }
   return asm;
 };

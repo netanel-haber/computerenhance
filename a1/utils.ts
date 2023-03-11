@@ -15,3 +15,6 @@ export const getBits = (
 
 export const getBit = (byte: number, index: number) =>
   Boolean(getBits(byte, { msb: index, lsb: index }));
+
+export const numBits = (byte: number): number =>
+  Math.floor(Math.log2(byte) + 1);
