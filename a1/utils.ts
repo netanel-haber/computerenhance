@@ -15,6 +15,3 @@ export const getBits = (
 
 export const getBit = (byte: number, index: number) =>
   Boolean(getBits(byte, { msb: index, lsb: index }));
-
-export const trimListing = (listing: string): string =>
-  listing.replaceAll(/;.*\n/g, "").trim();

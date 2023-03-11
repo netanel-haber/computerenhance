@@ -1,6 +1,5 @@
 import { assertEquals } from "assert";
 import { getBit, getBits } from "./utils.ts";
-import { basename } from "path";
 
 const W = [
   ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"],
@@ -25,14 +24,11 @@ const decodeInstruction = (b1: number, b2: number) => {
 };
 
 export const disassemble = (
-  path: string,
-  destination = `a1/output/${basename(path)}`,
+  assembly: Uint8Array,
 ): string => {
-  const file = Deno.readFileSync(path);
   let asm = "bits 16\n";
-  for (let i = 0; i < file.length; i += 2) {
-    asm += "\n" + decodeInstruction(file[i], file[i + 1]);
+  for (let i = 0; i < assembly.length; i += 2) {
+    asm += "\n" + decodeInstruction(assembly[i], assembly[i + 1]);
   }
-  Deno.writeTextFileSync(destination, asm);
-  return destination;
+  return asm;
 };
