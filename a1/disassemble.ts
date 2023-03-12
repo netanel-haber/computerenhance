@@ -1,7 +1,7 @@
 import { consumer } from "./consumer.ts";
 import { immToReg, regMemory } from "./decoders/mod.ts";
 
-import { getBits, numBits } from "./utils.ts";
+import { getBits, numBits } from "./bitManipulation.ts";
 
 const TO_REG_FROM_MEM_REG = 0b100010;
 const IMMEDIATE_TO_REGISTER = 0b1011;

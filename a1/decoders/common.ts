@@ -1,9 +1,8 @@
-import { getBit } from "../utils.ts";
+import { getBit } from "../bitManipulation.ts";
 
-export const W = [
-  ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"],
-  ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"],
-] as const;
+const wLow = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"] as const;
+const wHigh = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"] as const;
+export const W = [wLow, wHigh] as const;
 export const getRegisters = (b1: number, index = 0) =>
   W[Number(getBit(b1, index))];
 

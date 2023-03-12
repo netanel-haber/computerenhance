@@ -1,5 +1,5 @@
 import { assertEquals } from "assert";
-import { getBit, getBits, numBits } from "../utils.ts";
+import { getBit, getBits, numBits } from "../bitManipulation.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits inclusive", () => {

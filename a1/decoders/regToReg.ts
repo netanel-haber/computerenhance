@@ -1,12 +1,12 @@
 import { assert, assertNotEquals } from "assert";
-import { getBits } from "../utils.ts";
+import { getBits } from "../bitManipulation.ts";
 import { computeSourceDestination, Decoder, getRegisters } from "./common.ts";
 
-const getRegAndRm = (b2: number) => {
-  const reg = getBits(b2, { msb: 5, lsb: 3 });
-  const rm = getBits(b2, { msb: 2, lsb: 0 });
-  return { reg, rm };
-};
+const getRm = (b2: number) => getBits(b2, { msb: 2, lsb: 0 });
+const getRegAndRm = (b2: number) => ({
+  reg: getBits(b2, { msb: 5, lsb: 3 }),
+  rm: getRm(b2),
+});
 
 function registerMode(b1: number, b2: number) {
   const { reg, rm } = getRegAndRm(b2);
@@ -62,6 +62,10 @@ export const regMemory: Decoder = (asm, p) => {
       return registerMode(b1, b2);
     case Mode.MEMORY_NO_DISPLACEMENT:
       return memoryNoDisplacement(b1, b2);
+    case Mode.MEMORY_8_DISPLACEMENT:
+      throw new Error("8 disp not implemented");
+    case Mode.MEMORY_16_DISPLACEMENT:
+      throw new Error("16 disp not implemented");
   }
   throw new Error(`${mode} not found`);
 };
