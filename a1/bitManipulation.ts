@@ -19,4 +19,8 @@ export const getBit = (byte: number, index: number) =>
 export const numBits = (byte: number): number =>
   Math.floor(Math.log2(byte) + 1);
 
-export const twoByteNumber = (lsb: number, msb: number) => lsb + (msb << 8);
+export const multiByteNumber = (...bytes: number[]) =>
+  bytes.reduce((acc, cur, i) => acc + (cur << 8 * i), 0);
+
+export const twoByteNumber = (lsb: number, msb: number) =>
+  multiByteNumber(lsb, msb);
