@@ -10,13 +10,13 @@ const opcodeEquals = (byte: number, expected: number) =>
   getBits(byte, { lsb: 8 - numBits(expected) }) === expected;
 
 export const disassemble = (
-  assembly: Uint8Array,
+  binary: Uint8Array,
 ): string => {
   const asm = ["bits 16\n"];
   let pointer = 0;
-  const consume = consumer(assembly, asm);
-  while (pointer < assembly.length) {
-    const opByte = assembly[pointer];
+  const consume = consumer(binary, asm);
+  while (pointer < binary.length) {
+    const opByte = binary[pointer];
     if (opcodeEquals(opByte, TO_REG_FROM_MEM_REG)) {
       pointer = consume(regMemory, pointer);
       continue;
