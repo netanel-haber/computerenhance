@@ -11,13 +11,15 @@ export type Decoder = (
   pointer: number,
 ) => readonly [cmd: string, consumed: number];
 
-export const computeSourceDestination = (
+export const MOV = (
   b1: number,
-  first_reg: string,
-  second_reg: string,
+  reg: string,
+  rm: string,
+  consumed: number,
 ) => {
   const d = getBit(b1, 1), FIRST_REG_IS_DESTINATION = d;
-  const source = FIRST_REG_IS_DESTINATION ? second_reg : first_reg;
-  const destination = FIRST_REG_IS_DESTINATION ? first_reg : second_reg;
-  return { destination, source };
+  const source = FIRST_REG_IS_DESTINATION ? rm : reg;
+  const destination = FIRST_REG_IS_DESTINATION ? reg : rm;
+
+  return [`mov ${destination}, ${source}`, consumed] as const;
 };

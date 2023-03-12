@@ -1,23 +1,19 @@
 import { assert, assertNotEquals } from "assert";
 import { getBits, twoByteNumber } from "../bitManipulation.ts";
-import { computeSourceDestination, Decoder, getRegisters } from "./common.ts";
+import { Decoder, getRegisters, MOV } from "./common.ts";
 
 const getRm = (b2: number) => getBits(b2, { msb: 2, lsb: 0 });
-const getRegAndRm = (b2: number) => ({
+const init = (b1: number, b2: number) => ({
   reg: getBits(b2, { msb: 5, lsb: 3 }),
   rm: getRm(b2),
+  registers: getRegisters(b1),
 });
 
-function registerMode(b1: number, b2: number) {
-  const { reg, rm } = getRegAndRm(b2);
-  const registers = getRegisters(b1);
-  const { destination, source } = computeSourceDestination(
-    b1,
-    registers[reg],
-    registers[rm],
-  );
-  return [`mov ${destination}, ${source}`, 2] as const;
-}
+const regToReg = (b1: number, b2: number) => {
+  const { reg, rm, registers } = init(b1, b2);
+
+  return MOV(b1, registers[reg], registers[rm], 2);
+};
 
 const rmToRegister: Array<[string] | [string, string]> = [
   ["bx", "si"],
@@ -36,8 +32,7 @@ function memory(
   ...bytes: number[]
 ) {
   assert(bytes.length <= 2);
-  const registers = getRegisters(b1);
-  const { reg, rm } = getRegAndRm(b2);
+  const { reg, rm, registers } = init(b1, b2);
 
   const rmStr = rmToRegister[rm];
 
@@ -50,16 +45,15 @@ function memory(
         ),
   );
 
-  const { destination, source } = computeSourceDestination(
+  return MOV(
     b1,
     registers[reg],
     `[${calculation.join(" + ")}]`,
+    arguments.length,
   );
-  return [`mov ${destination}, ${source}`, arguments.length] as const;
 }
 
 const RM_SPECIAL_CASE_NO_DISPLACEMENT = 0b110;
-
 const modeNoDisplacement = (b1: number, b2: number) => {
   assertNotEquals(getRm(b2), RM_SPECIAL_CASE_NO_DISPLACEMENT);
   return memory(b1, b2);
@@ -90,7 +84,7 @@ export const regMemory: Decoder = (asm, p) => {
 
   switch (mode) {
     case Mode.REGISTER:
-      return registerMode(b1, b2);
+      return regToReg(b1, b2);
     case Mode.MEMORY_NO_DISPLACEMENT:
       return modeNoDisplacement(b1, b2);
     case Mode.MEMORY_8_DISPLACEMENT:
