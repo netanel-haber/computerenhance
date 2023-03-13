@@ -5,7 +5,7 @@ import {
   getMostSignificantBits,
   numBits,
 } from "../bitManipulation.ts";
-import { A37, A38, A39, A40 } from "./consts.ts";
+import { cases } from "./consts.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits inclusive", () => {
@@ -31,10 +31,6 @@ Deno.test("num bits", () => {
   assertEquals(numBits(0b00001), 1);
 });
 
-Deno.test(A37, () => assertReassembledEqualsOriginalAssembly(A37));
-
-Deno.test(A38, () => assertReassembledEqualsOriginalAssembly(A38));
-
-Deno.test(A39, () => assertReassembledEqualsOriginalAssembly(A39));
-
-Deno.test(A40, () => assertReassembledEqualsOriginalAssembly(A40));
+Object.entries(cases).forEach(([test, path]) => {
+  Deno.test(test, () => assertReassembledEqualsOriginalAssembly(path));
+});
