@@ -28,9 +28,9 @@ const parseRegAndRm = (
   b1: number,
   b2: number,
 ): [reg: string, rm: readonly string[]] => {
+  const reg = getReg(b2);
   const rm = getRm(b2);
   const registers = getRegistersForMemReg(b1);
-  const reg = getReg(b2);
   return [registers[reg], rmToRegister[rm]];
 };
 
@@ -74,7 +74,25 @@ const withAddressCalculation4 = (
   );
 };
 
-const RM_SPECIAL_CASE_NO_DISPLACEMENT = 0b110;
+const specialCaseDirectAddress = (
+  b1: number,
+  b2: number,
+  b3: number,
+  b4: number,
+) => {
+  const [reg] = parseRegAndRm(b1, b2);
+
+  const twoByte = twoByteNumber(b3, b4);
+
+  return MOV(
+    b1,
+    reg,
+    joinAddress([String(twoByte)]),
+    4,
+  );
+};
+
+const RM_SPECIAL_CASE_DIRECT_ADDRESS = 0b110;
 
 enum Mode {
   MEMORY_NO_DISPLACEMENT = 0b00,
@@ -96,9 +114,13 @@ export const regMemory: Decoder = (asm, p) => {
       const registers = getRegistersForMemReg(b1);
       return MOV(b1, registers[reg], registers[rm], 2);
     }
-    case Mode.MEMORY_NO_DISPLACEMENT:
-      assertNotEquals(getRm(b2), RM_SPECIAL_CASE_NO_DISPLACEMENT);
+    case Mode.MEMORY_NO_DISPLACEMENT: {
+      const rm = getRm(b2);
+      if (rm === RM_SPECIAL_CASE_DIRECT_ADDRESS) {
+        return specialCaseDirectAddress(b1, b2, asm[p + 2], asm[p + 3]);
+      }
       return withAddressCalculation2(b1, b2);
+    }
     case Mode.MEMORY_8_DISPLACEMENT:
       return withAddressCalculation3(b1, b2, asm[p + 2]);
     case Mode.MEMORY_16_DISPLACEMENT:
