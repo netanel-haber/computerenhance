@@ -1,12 +1,20 @@
 import { assertEquals } from "assert";
-import { getBit, getBits, numBits } from "../bitManipulation.ts";
+import {
+  getBit,
+  getBits,
+  getMostSignificantBits,
+  numBits,
+} from "../bitManipulation.ts";
+import { A37, A38, A39 } from "./consts.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits inclusive", () => {
-  assertEquals(getBits(0b11101000, { msb: 5, lsb: 3 }), 0b101);
-  assertEquals(getBits(0b11101000, { lsb: 5 }), 0b111);
-  assertEquals(getBits(0b11101000, { lsb: 3 }), 0b11101);
-  assertEquals(getBits(0b11101000, { msb: 5 }), 0b101000);
+  assertEquals(getBits(0b11101000, 5, 3), 0b101);
+  assertEquals(getBits(0b11101000, 7, 5), 0b111);
+  assertEquals(getBits(0b11101000, 7, 3), 0b11101);
+  assertEquals(getBits(0b11101000, 5, 0), 0b101000);
+  assertEquals(getMostSignificantBits(0b11101000, 5), 0b111);
+  assertEquals(getMostSignificantBits(0b11101000, 3), 0b11101);
 });
 
 Deno.test("get bit", () => {
@@ -23,17 +31,8 @@ Deno.test("num bits", () => {
   assertEquals(numBits(0b00001), 1);
 });
 
-Deno.test("disassembled matches original 37", () =>
-  assertReassembledEqualsOriginalAssembly(
-    "computer_enhance/perfaware/part1/listing_0037_single_register_mov",
-  ));
+Deno.test(A37, () => assertReassembledEqualsOriginalAssembly(A37));
 
-Deno.test("disassembled matches original 38", () =>
-  assertReassembledEqualsOriginalAssembly(
-    "computer_enhance/perfaware/part1/listing_0038_many_register_mov",
-  ));
+Deno.test(A38, () => assertReassembledEqualsOriginalAssembly(A38));
 
-Deno.test("disassembled matches original 39", () =>
-  assertReassembledEqualsOriginalAssembly(
-    "computer_enhance/perfaware/part1/listing_0039_more_movs",
-  ));
+Deno.test(A39, () => assertReassembledEqualsOriginalAssembly(A39));

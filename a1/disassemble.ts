@@ -1,17 +1,17 @@
 import { consumer } from "./consumer.ts";
 import { immToReg, regMemory } from "./decoders/mod.ts";
 
-import { getBits, numBits } from "./bitManipulation.ts";
+import { getMostSignificantBits, numBits } from "./bitManipulation.ts";
 
 const TO_REG_FROM_MEM_REG = 0b100010;
 const IMMEDIATE_TO_REGISTER = 0b1011;
 
 const opcodeEquals = (byte: number, expected: number) =>
-  getBits(byte, { lsb: 8 - numBits(expected) }) === expected;
+  getMostSignificantBits(byte, 8 - numBits(expected)) === expected;
 
 export const disassemble = (
   binary: Uint8Array,
-): string => {
+): string[] => {
   const asm = ["bits 16\n"];
   let pointer = 0;
   const consume = consumer(binary, asm);
@@ -27,5 +27,5 @@ export const disassemble = (
     }
     throw new Error(`Could not find decoder for byte ${opByte}`);
   }
-  return asm.join("\n");
+  return asm;
 };
