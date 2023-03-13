@@ -15,6 +15,9 @@ export const getMostSignificantBits = (
 ): number => getBits(byte, 7, leastIncludedBit);
 
 export const getBit = (byte: number, index: number) =>
+  getBits(byte, index, index);
+
+export const bitOn = (byte: number, index: number) =>
   getBits(byte, index, index) !== 0;
 
 export const numBits = (byte: number): number =>

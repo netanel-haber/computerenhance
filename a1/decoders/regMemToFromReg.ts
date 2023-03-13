@@ -1,10 +1,13 @@
 import { assert, assertNotEquals } from "assert";
 import {
+  getBit,
   getBits,
   getMostSignificantBits,
   twoByteNumber,
 } from "../bitManipulation.ts";
-import { Decoder, getRegisters, MOV } from "./common.ts";
+import { Decoder, MOV, W } from "./common.ts";
+
+const getRegistersForMemReg = (b1: number) => W[getBit(b1, 0)];
 
 const getReg = (b2: number) => getBits(b2, 5, 3);
 const getRm = (b2: number) => getBits(b2, 2, 0);
@@ -26,7 +29,7 @@ const parseRegAndRm = (
   b2: number,
 ): [reg: string, rm: readonly string[]] => {
   const rm = getRm(b2);
-  const registers = getRegisters(b1);
+  const registers = getRegistersForMemReg(b1);
   const reg = getReg(b2);
   return [registers[reg], rmToRegister[rm]];
 };
@@ -90,7 +93,7 @@ export const regMemory: Decoder = (asm, p) => {
     case Mode.REGISTER: {
       const reg = getReg(b2);
       const rm = getRm(b2);
-      const registers = getRegisters(b1);
+      const registers = getRegistersForMemReg(b1);
       return MOV(b1, registers[reg], registers[rm], 2);
     }
     case Mode.MEMORY_NO_DISPLACEMENT:

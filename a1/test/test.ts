@@ -1,11 +1,11 @@
 import { assertEquals } from "assert";
 import {
-  getBit,
+  bitOn,
   getBits,
   getMostSignificantBits,
   numBits,
 } from "../bitManipulation.ts";
-import { A37, A38, A39 } from "./consts.ts";
+import { A37, A38, A39, A40 } from "./consts.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits inclusive", () => {
@@ -18,10 +18,10 @@ Deno.test("get bits inclusive", () => {
 });
 
 Deno.test("get bit", () => {
-  assertEquals(getBit(0b10001000, 3), true);
-  assertEquals(getBit(0b10001000, 7), true);
+  assertEquals(bitOn(0b10001000, 3), true);
+  assertEquals(bitOn(0b10001000, 7), true);
   for (const i of [0, 1, 2, 4, 5, 6]) {
-    assertEquals(getBit(0b10001000, i), false);
+    assertEquals(bitOn(0b10001000, i), false);
   }
 });
 
@@ -36,3 +36,5 @@ Deno.test(A37, () => assertReassembledEqualsOriginalAssembly(A37));
 Deno.test(A38, () => assertReassembledEqualsOriginalAssembly(A38));
 
 Deno.test(A39, () => assertReassembledEqualsOriginalAssembly(A39));
+
+Deno.test(A40, () => assertReassembledEqualsOriginalAssembly(A40));
