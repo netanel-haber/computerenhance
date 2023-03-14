@@ -1,11 +1,16 @@
+import { twoByteNumber } from "./bitManipulation.ts";
 import { ExtractSignedByte, ExtractSignedTwoBytes } from "./decoders/common.ts";
 import { Decoder } from "./decoders/mod.ts";
 
 export const consumer = (assembly: Uint8Array, asm: string[]) => {
-  const dv = new DataView(assembly.buffer);
-  const nom8 = ((pointer: number) => dv.getInt8(pointer)) as ExtractSignedByte;
-  const nom16 =
-    ((pointer: number) => dv.getInt16(pointer, true)) as ExtractSignedTwoBytes;
+  const nom8 = ((pointer: number) => {
+    const byte = assembly[pointer];
+    return byte > 127 ? byte - 256 : byte;
+  }) as ExtractSignedByte;
+  const nom16 = ((pointer: number) => {
+    const byte = twoByteNumber(assembly[pointer], assembly[pointer + 1]);
+    return byte > 32767 ? byte - 65536 : byte;
+  }) as ExtractSignedTwoBytes;
   return (
     decode: Decoder,
     pointer: number,
