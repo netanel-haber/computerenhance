@@ -1,11 +1,19 @@
 import { consumer } from "./consumer.ts";
-import { immToReg, memToAccViceVersa, regMemory } from "./decoders/mod.ts";
+import {
+  immToMemReg,
+  immToReg,
+  memToAccViceVersa,
+  regMemory,
+} from "./decoders/mod.ts";
 
 import { getMostSignificantBits, numBits } from "./bitManipulation.ts";
 
 const TO_REG_FROM_MEM_REG = 0b100010;
 const IMMEDIATE_TO_REGISTER = 0b1011;
 const MEMORY_TO_ACCUMULATOR_AND_VICE_VERSA = 0b1010000 >> 1;
+const IMMEDIATE_TO_REG_MEM = 0b1100011;
+
+const toBin = (b: number) => (b >>> 0).toString(2);
 
 const opcodeEquals = (byte: number, expected: number) =>
   getMostSignificantBits(byte, 8 - numBits(expected)) === expected;
@@ -30,7 +38,13 @@ export const disassemble = (
       pointer = consume(memToAccViceVersa, pointer);
       continue;
     }
-    throw new Error(`Could not find decoder for byte ${opByte}`);
+    if (opcodeEquals(opByte, IMMEDIATE_TO_REG_MEM)) {
+      pointer = consume(immToMemReg, pointer);
+      continue;
+    }
+    throw new Error(
+      `Could not find decoder for byte ${toBin(opByte)}`,
+    );
   }
   return asm;
 };

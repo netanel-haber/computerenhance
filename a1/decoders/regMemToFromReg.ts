@@ -1,28 +1,18 @@
-import { assert, assertNotEquals } from "assert";
+import { assert } from "assert";
+import { getMostSignificantBits } from "../bitManipulation.ts";
 import {
-  getBit,
-  getBits,
-  getMostSignificantBits,
-  twoByteNumber,
-} from "../bitManipulation.ts";
-import { Decoder, MOV, W } from "./common.ts";
-
-const getRegistersForMemReg = (b1: number) => W[getBit(b1, 0)];
-
-const getReg = (b2: number) => getBits(b2, 5, 3);
-const getRm = (b2: number) => getBits(b2, 2, 0);
-const rmToRegister = [
-  ["bx", "si"],
-  ["bx", "di"],
-  ["bp", "si"],
-  ["bp", "di"],
-  ["si"],
-  ["di"],
-  ["bp"],
-  ["bx"],
-];
-
-const joinAddress = (rmStr: readonly string[]) => `[${rmStr.join(" + ")}]`;
+  Decoder,
+  ExtractSignedByte,
+  ExtractSignedTwoBytes,
+  getReg,
+  getRegistersForMemReg,
+  getRm,
+  joinAddress,
+  Mode,
+  MOV,
+  RM_SPECIAL_CASE_DIRECT_ADDRESS,
+  rmToRegister,
+} from "./common.ts";
 
 const parseRegAndRm = (
   b1: number,
@@ -37,70 +27,49 @@ const parseRegAndRm = (
 const withAddressCalculation2 = (b1: number, b2: number) => {
   const [regStr, rmStr] = parseRegAndRm(b1, b2);
 
-  return MOV(
-    b1,
-    regStr,
-    joinAddress(rmStr),
-    2,
-  );
+  return MOV(b1, regStr, joinAddress(rmStr), 2);
 };
 
-const withAddressCalculation3 = (b1: number, b2: number, b3: number) => {
+const withAddressCalculation3 = (
+  b1: number,
+  b2: number,
+  nom8: ExtractSignedByte,
+  pointer: number,
+) => {
   const [reg, rm] = parseRegAndRm(b1, b2);
 
-  return MOV(
-    b1,
-    reg,
-    joinAddress(rm.concat(b3 ? [String(b3)] : [])),
-    3,
-  );
+  const v = nom8(pointer + 2);
+
+  return MOV(b1, reg, joinAddress(rm, v), 3);
 };
 
 const withAddressCalculation4 = (
   b1: number,
   b2: number,
-  b3: number,
-  b4: number,
+  nom16: ExtractSignedTwoBytes,
+  pointer: number,
 ) => {
   const [reg, rm] = parseRegAndRm(b1, b2);
 
-  const twoByte = twoByteNumber(b3, b4);
+  const twoByte = nom16(pointer + 2);
 
-  return MOV(
-    b1,
-    reg,
-    joinAddress(rm.concat(twoByte ? [String(twoByte)] : [])),
-    4,
-  );
+  return MOV(b1, reg, joinAddress(rm, twoByte), 4);
 };
 
 const specialCaseDirectAddress = (
   b1: number,
   b2: number,
-  b3: number,
-  b4: number,
+  nom16: ExtractSignedTwoBytes,
+  pointer: number,
 ) => {
   const [reg] = parseRegAndRm(b1, b2);
 
-  const twoByte = twoByteNumber(b3, b4);
+  const twoByte = nom16(pointer + 2);
 
-  return MOV(
-    b1,
-    reg,
-    joinAddress([String(twoByte)]),
-    4,
-  );
+  return MOV(b1, reg, joinAddress([], twoByte), 4);
 };
 
-const RM_SPECIAL_CASE_DIRECT_ADDRESS = 0b110;
-
-enum Mode {
-  MEMORY_NO_DISPLACEMENT = 0b00,
-  MEMORY_8_DISPLACEMENT = 0b01,
-  MEMORY_16_DISPLACEMENT = 0b10,
-  REGISTER = 0b11,
-}
-export const regMemory: Decoder = (asm, p) => {
+export const regMemory: Decoder = (asm, p, nom8, nom16) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 
@@ -117,14 +86,14 @@ export const regMemory: Decoder = (asm, p) => {
     case Mode.MEMORY_NO_DISPLACEMENT: {
       const rm = getRm(b2);
       if (rm === RM_SPECIAL_CASE_DIRECT_ADDRESS) {
-        return specialCaseDirectAddress(b1, b2, asm[p + 2], asm[p + 3]);
+        return specialCaseDirectAddress(b1, b2, nom16, p);
       }
       return withAddressCalculation2(b1, b2);
     }
     case Mode.MEMORY_8_DISPLACEMENT:
-      return withAddressCalculation3(b1, b2, asm[p + 2]);
+      return withAddressCalculation3(b1, b2, nom8, p);
     case Mode.MEMORY_16_DISPLACEMENT:
-      return withAddressCalculation4(b1, b2, asm[p + 2], asm[p + 3]);
+      return withAddressCalculation4(b1, b2, nom16, p);
   }
   throw new Error(`${mode} not found`);
 };
