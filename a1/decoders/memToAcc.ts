@@ -2,8 +2,8 @@ import { bitOn, getBit, twoByteNumber } from "../bitManipulation.ts";
 import { Decoder } from "./common.ts";
 
 const renderAx = [
-  (num: number) => `MOV ax, [${num}]`,
-  (num: number) => `MOV [${num}], ax`,
+  (num: number) => `mov ax, [${num}]`,
+  (num: number) => `mov [${num}], ax`,
 ];
 
 export const memToAccViceVersa: Decoder = (asm, p) => {
