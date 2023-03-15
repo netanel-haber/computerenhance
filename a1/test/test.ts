@@ -1,6 +1,9 @@
+// deno test --allow-read --allow-write --allow-run=nasm
+
 import { assertEquals } from "assert";
 import {
   bitOn,
+  getBit,
   getBits,
   getMostSignificantBits,
   numBits,
@@ -8,7 +11,7 @@ import {
 import { cases } from "./consts.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
-Deno.test("get bits inclusive", () => {
+Deno.test("get bits", () => {
   assertEquals(getBits(0b11101000, 5, 3), 0b101);
   assertEquals(getBits(0b11101000, 7, 5), 0b111);
   assertEquals(getBits(0b11101000, 7, 3), 0b11101);
@@ -17,11 +20,17 @@ Deno.test("get bits inclusive", () => {
   assertEquals(getMostSignificantBits(0b11101000, 3), 0b11101);
 });
 
-Deno.test("get bit", () => {
+Deno.test("get bit, bit on", () => {
   assertEquals(bitOn(0b10001000, 3), true);
   assertEquals(bitOn(0b10001000, 7), true);
   for (const i of [0, 1, 2, 4, 5, 6]) {
     assertEquals(bitOn(0b10001000, i), false);
+  }
+
+  assertEquals(getBit(0b10001000, 3), 1);
+  assertEquals(getBit(0b10001000, 7), 1);
+  for (const i of [0, 1, 2, 4, 5, 6]) {
+    assertEquals(getBit(0b10001000, i), 0);
   }
 });
 

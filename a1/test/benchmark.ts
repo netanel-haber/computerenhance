@@ -1,3 +1,5 @@
+// deno bench --allow-read ./a1/test/benchmark.ts
+
 import { disassemble } from "../disassemble.ts";
 import { cases } from "./consts.ts";
 
