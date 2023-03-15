@@ -17,7 +17,7 @@ import {
 const parseRegAndRm = (
   b1: number,
   b2: number,
-): [reg: string, rm: readonly string[]] => {
+): [reg: string, rm: string] => {
   const reg = getReg(b2);
   const rm = getRm(b2);
   const registers = getRegistersForMemReg(b1);
@@ -66,7 +66,7 @@ const specialCaseDirectAddress = (
 
   const twoByte = nom16(pointer + 2);
 
-  return MOV(b1, reg, joinAddress([], twoByte), 4);
+  return MOV(b1, reg, joinAddress("", twoByte), 4);
 };
 
 export const regMemory: Decoder = (asm, p, nom8, nom16) => {

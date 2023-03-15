@@ -46,18 +46,18 @@ export const getRegistersForMemReg = (b1: number) => W[getBit(b1, 0)];
 export const RM_SPECIAL_CASE_DIRECT_ADDRESS = 0b110;
 
 export const rmToRegister = [
-  ["bx", "si"],
-  ["bx", "di"],
-  ["bp", "si"],
-  ["bp", "di"],
-  ["si"],
-  ["di"],
-  ["bp"],
-  ["bx"],
+  "bx + si",
+  "bx + di",
+  "bp + si",
+  "bp + di",
+  "si",
+  "di",
+  "bp",
+  "bx",
 ];
 
-export const joinAddress = (rmStr: readonly string[], value?: number) =>
-  `[${
-    rmStr.concat(value ? [String(value)] : []).join(" + ")
-      .replace("+ -", "- ")
-  }]` as const;
+export const joinAddress = (rmStr: string, value?: number) => {
+  if (!value) return `[${rmStr}]`;
+  if (value > 0) return `[${rmStr} + ${String(value)}]`;
+  return `[${rmStr} - ${String(Math.abs(value))}]`;
+};
