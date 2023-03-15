@@ -56,8 +56,10 @@ export const rmToRegister = [
   "bx",
 ];
 
+export const encase = (content: string) => `[${content}]` as const;
+
 export const joinAddress = (rmStr: string, value?: number) => {
-  if (!value) return `[${rmStr}]`;
-  if (value > 0) return `[${rmStr} + ${String(value)}]`;
-  return `[${rmStr} - ${String(Math.abs(value))}]`;
+  if (!value) return encase(rmStr);
+  if (value > 0) return encase(`${rmStr} + ${String(value)}`);
+  return encase(`${rmStr} - ${String(Math.abs(value))}`);
 };

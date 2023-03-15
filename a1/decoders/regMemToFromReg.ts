@@ -2,6 +2,7 @@ import { assert } from "assert";
 import { getMostSignificantBits } from "../bitManipulation.ts";
 import {
   Decoder,
+  encase,
   ExtractSignedByte,
   ExtractSignedTwoBytes,
   getReg,
@@ -66,7 +67,7 @@ const specialCaseDirectAddress = (
 
   const twoByte = nom16(pointer + 2);
 
-  return MOV(b1, reg, joinAddress("", twoByte), 4);
+  return MOV(b1, reg, encase(String(twoByte)), 4);
 };
 
 export const regMemory: Decoder = (asm, p, nom8, nom16) => {

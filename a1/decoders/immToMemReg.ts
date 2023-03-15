@@ -14,6 +14,23 @@ import {
   W,
 } from "./common.ts";
 
+const immediateAndConsumed = (
+  immediateIsWord: number,
+  asm: Uint8Array,
+  pointer: number,
+  offsetToImmediate: number,
+) => {
+  const immediatePointer = pointer + offsetToImmediate;
+  const lsb = asm[immediatePointer];
+  const msb = asm[immediatePointer + 1];
+  const immediate = immediateIsWord
+    ? `word ${twoByteNumber(lsb, msb)}`
+    : `byte ${lsb}`;
+
+  const consumed = offsetToImmediate + 1 + immediateIsWord;
+  return [immediate, consumed] as const;
+};
+
 export const immToMemReg: Decoder = (asm, p, nom8, nom16) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
@@ -27,45 +44,34 @@ export const immToMemReg: Decoder = (asm, p, nom8, nom16) => {
   switch (mode) {
     case Mode.REGISTER: {
       const registers = W[WORD];
-      const third = asm[p + 2];
-      const immediate = WORD
-        ? `word ${twoByteNumber(third, asm[p + 3])}`
-        : `byte ${third}`;
-      return [`mov ${registers[rm]}, ${immediate}`, WORD ? 4 : 3];
+      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 2);
+      return [`mov ${registers[rm]}, ${immediate}`, consumed];
     }
     case Mode.MEMORY_NO_DISPLACEMENT: {
       if (rm === RM_SPECIAL_CASE_DIRECT_ADDRESS) {
         throw new Error();
       }
-      const third = asm[p + 2];
-      const immediate = WORD
-        ? `word ${twoByteNumber(third, asm[p + 3])}`
-        : `byte ${third}`;
+      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 2);
       return [
         `mov ${joinAddress(rmToRegister[rm])}, ${immediate}`,
-        WORD ? 4 : 3,
+        consumed,
       ];
     }
     case Mode.MEMORY_8_DISPLACEMENT: {
-      const fourth = asm[p + 3];
-      const immediate = WORD
-        ? `word ${twoByteNumber(fourth, asm[p + 4])}`
-        : `byte ${fourth}`;
-      const displacement = nom8(p + 2);
+      const disp = p + 2;
+      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 3);
       return [
-        `mov ${joinAddress(rmToRegister[rm], displacement)}, ${immediate}`,
-        WORD ? 5 : 4,
+        `mov ${joinAddress(rmToRegister[rm], nom8(disp))}, ${immediate}`,
+        consumed,
       ];
     }
     case Mode.MEMORY_16_DISPLACEMENT: {
-      const fifth = asm[p + 4];
-      const immediate = WORD
-        ? `word ${twoByteNumber(fifth, asm[p + 5])}`
-        : `byte ${fifth}`;
-      const displacement = nom16(p + 2);
+      const disp = p + 2;
+      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 4);
+
       return [
-        `mov ${joinAddress(rmToRegister[rm], displacement)}, ${immediate}`,
-        WORD ? 6 : 5,
+        `mov ${joinAddress(rmToRegister[rm], nom16(disp))}, ${immediate}`,
+        consumed,
       ];
     }
   }
