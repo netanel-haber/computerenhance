@@ -5,7 +5,6 @@ import {
   twoByteNumber,
 } from "../bitManipulation.ts";
 import {
-  Decoder,
   getRm,
   joinAddress,
   Mode,
@@ -13,6 +12,8 @@ import {
   rmToRegister,
   W,
 } from "./common.ts";
+import { Decoder } from "./decode.ts";
+import { MOV } from "./move.ts";
 
 const immediateAndConsumed = (
   immediateIsWord: number,
@@ -44,36 +45,29 @@ export const immToMemReg: Decoder = (asm, p, nom8, nom16) => {
   switch (mode) {
     case Mode.REGISTER: {
       const registers = W[WORD];
-      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 2);
-      return [`mov ${registers[rm]}, ${immediate}`, consumed];
+      return MOV(registers[rm], ...immediateAndConsumed(WORD, asm, p, 2));
     }
     case Mode.MEMORY_NO_DISPLACEMENT: {
       if (rm === RM_SPECIAL_CASE_DIRECT_ADDRESS) {
         throw new Error();
       }
-      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 2);
-      return [
-        `mov ${joinAddress(rmToRegister[rm])}, ${immediate}`,
-        consumed,
-      ];
+
+      return MOV(
+        joinAddress(rmToRegister[rm]),
+        ...immediateAndConsumed(WORD, asm, p, 2),
+      );
     }
     case Mode.MEMORY_8_DISPLACEMENT: {
-      const disp = p + 2;
-      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 3);
-      return [
-        `mov ${joinAddress(rmToRegister[rm], nom8(disp))}, ${immediate}`,
-        consumed,
-      ];
+      return MOV(
+        joinAddress(rmToRegister[rm], nom8(p + 2)),
+        ...immediateAndConsumed(WORD, asm, p, 3),
+      );
     }
-    case Mode.MEMORY_16_DISPLACEMENT: {
-      const disp = p + 2;
-      const [immediate, consumed] = immediateAndConsumed(WORD, asm, p, 4);
-
-      return [
-        `mov ${joinAddress(rmToRegister[rm], nom16(disp))}, ${immediate}`,
-        consumed,
-      ];
-    }
+    case Mode.MEMORY_16_DISPLACEMENT:
+      return MOV(
+        joinAddress(rmToRegister[rm], nom16(p + 2)),
+        ...immediateAndConsumed(WORD, asm, p, 4),
+      );
   }
   throw new Error(`${mode} not found`);
 };

@@ -1,5 +1,6 @@
 import { twoByteNumber } from "./bitManipulation.ts";
-import { ExtractSignedByte, ExtractSignedTwoBytes } from "./decoders/common.ts";
+import { ExtractSignedByte, ExtractSignedTwoBytes } from "./decoders/decode.ts";
+
 import { Decoder } from "./decoders/mod.ts";
 
 export const consumer = (assembly: Uint8Array, asm: string[]) => {

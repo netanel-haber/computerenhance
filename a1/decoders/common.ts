@@ -1,36 +1,8 @@
-import { bitOn, getBit, getBits } from "../bitManipulation.ts";
+import { getBit, getBits } from "../bitManipulation.ts";
 
 const wLow = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"] as const;
 const wHigh = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"] as const;
 export const W = [wLow, wHigh] as const;
-
-export type ExtractSignedByte = ((pointer: number) => number) & {
-  8: never;
-};
-
-export type ExtractSignedTwoBytes = ((pointer: number) => number) & {
-  16: never;
-};
-
-export type Decoder = (
-  assembly: Uint8Array,
-  pointer: number,
-  nom8: ExtractSignedByte,
-  nom16: ExtractSignedTwoBytes,
-) => readonly [cmd: string, consumed: number];
-
-export const MOV = (
-  b1: number,
-  reg: string,
-  rm: string,
-  consumed: number,
-) => {
-  const d = bitOn(b1, 1), FIRST_REG_IS_DESTINATION = d;
-  const source = FIRST_REG_IS_DESTINATION ? rm : reg;
-  const destination = FIRST_REG_IS_DESTINATION ? reg : rm;
-
-  return [`mov ${destination}, ${source}`, consumed] as const;
-};
 
 export enum Mode {
   MEMORY_NO_DISPLACEMENT = 0b00,
@@ -56,7 +28,7 @@ export const rmToRegister = [
   "bx",
 ];
 
-export const encase = (content: string) => `[${content}]` as const;
+export const encase = (content: string | number) => `[${content}]` as const;
 
 export const joinAddress = (rmStr: string, value?: number) => {
   if (!value) return encase(rmStr);
