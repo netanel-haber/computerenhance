@@ -12,7 +12,7 @@ import {
   rmToRegister,
   W,
 } from "../common.ts";
-import { Decoder } from "./decode.ts";
+import { MoveDecoder } from "./decode.ts";
 import { MOV } from "./move.ts";
 
 const immediateAndConsumed = (
@@ -32,7 +32,7 @@ const immediateAndConsumed = (
   return [immediate, consumed] as const;
 };
 
-export const immToMemReg: Decoder = (asm, p, nom8, nom16) => {
+export const immToMemReg: MoveDecoder = (asm, p, nom8, nom16) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 

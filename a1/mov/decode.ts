@@ -1,16 +1,7 @@
-import { Move } from "./move.ts";
+import { DecodedInstruction, Decoder } from "../decode.ts";
 
-export type ExtractSignedByte = ((pointer: number) => number) & {
-  8: never;
-};
+export type Move = `mov ${string}, ${string | number}`;
 
-export type ExtractSignedTwoBytes = ((pointer: number) => number) & {
-  16: never;
-};
+export type DecodedMove = DecodedInstruction<Move>;
 
-export type Decoder = (
-  assembly: Uint8Array,
-  pointer: number,
-  nom8: ExtractSignedByte,
-  nom16: ExtractSignedTwoBytes,
-) => Move;
+export type MoveDecoder = Decoder<Move>;

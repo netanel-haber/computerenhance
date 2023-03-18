@@ -10,7 +10,8 @@ import {
   RM_SPECIAL_CASE_DIRECT_ADDRESS,
   rmToRegister,
 } from "../common.ts";
-import { Decoder, ExtractSignedByte, ExtractSignedTwoBytes } from "./decode.ts";
+import { ExtractSignedByte, ExtractSignedTwoBytes } from "../decode.ts";
+import { MoveDecoder } from "./decode.ts";
 import { movWithDFlag } from "./move.ts";
 
 const parseRegAndRm = (
@@ -68,7 +69,7 @@ const specialCaseDirectAddress = (
   return movWithDFlag(b1, reg, encase(String(twoByte)), 4);
 };
 
-export const regMemory: Decoder = (asm, p, nom8, nom16) => {
+export const regMemory: MoveDecoder = (asm, p, nom8, nom16) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 

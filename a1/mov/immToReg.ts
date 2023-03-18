@@ -1,9 +1,9 @@
 import { getBit, getBits, twoByteNumber } from "../bitManipulation.ts";
 import { W } from "../common.ts";
-import { Decoder } from "./decode.ts";
+import { MoveDecoder } from "./decode.ts";
 import { MOV } from "./move.ts";
 
-export const immToReg: Decoder = (asm, p) => {
+export const immToReg: MoveDecoder = (asm, p) => {
   const b1 = asm[p];
   const WORD = getBit(b1, 3);
   const registers = W[WORD];

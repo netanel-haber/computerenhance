@@ -8,7 +8,7 @@ import {
   getMostSignificantBits,
   numBits,
 } from "../bitManipulation.ts";
-import { cases } from "./consts.ts";
+import { cases } from "./cases.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 
 Deno.test("get bits", () => {
