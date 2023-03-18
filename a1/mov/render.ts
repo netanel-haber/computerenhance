@@ -1,5 +1,5 @@
 import { bitOn } from "../bitManipulation.ts";
-import { DecodedMove } from "./decode.ts";
+import { DecodedMove } from "./types.ts";
 
 export const MOV = (
   destination: string,

@@ -12,8 +12,8 @@ import {
   rmToRegister,
   W,
 } from "../common.ts";
-import { MoveDecoder } from "./decode.ts";
-import { MOV } from "./move.ts";
+import { MoveDecoder } from "./types.ts";
+import { MOV } from "./render.ts";
 
 const immediateAndConsumed = (
   immediateIsWord: number,

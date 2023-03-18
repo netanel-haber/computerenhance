@@ -11,8 +11,8 @@ import {
   rmToRegister,
 } from "../common.ts";
 import { ExtractSignedByte, ExtractSignedTwoBytes } from "../decode.ts";
-import { MoveDecoder } from "./decode.ts";
-import { movWithDFlag } from "./move.ts";
+import { MoveDecoder } from "./types.ts";
+import { movWithDFlag } from "./render.ts";
 
 const parseRegAndRm = (
   b1: number,
