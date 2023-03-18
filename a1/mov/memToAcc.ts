@@ -1,5 +1,5 @@
 import { bitOn, getBit, twoByteNumber } from "../bitManipulation.ts";
-import { encase } from "./common.ts";
+import { encase } from "../common.ts";
 import { Decoder } from "./decode.ts";
 import { MOV } from "./move.ts";
 

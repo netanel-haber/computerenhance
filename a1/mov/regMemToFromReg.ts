@@ -9,7 +9,7 @@ import {
   Mode,
   RM_SPECIAL_CASE_DIRECT_ADDRESS,
   rmToRegister,
-} from "./common.ts";
+} from "../common.ts";
 import { Decoder, ExtractSignedByte, ExtractSignedTwoBytes } from "./decode.ts";
 import { movWithDFlag } from "./move.ts";
 

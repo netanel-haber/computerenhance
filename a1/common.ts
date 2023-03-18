@@ -1,4 +1,4 @@
-import { getBit, getBits } from "../bitManipulation.ts";
+import { getBit, getBits } from "./bitManipulation.ts";
 
 const wLow = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"] as const;
 const wHigh = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"] as const;

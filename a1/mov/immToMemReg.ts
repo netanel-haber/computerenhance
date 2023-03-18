@@ -11,7 +11,7 @@ import {
   RM_SPECIAL_CASE_DIRECT_ADDRESS,
   rmToRegister,
   W,
-} from "./common.ts";
+} from "../common.ts";
 import { Decoder } from "./decode.ts";
 import { MOV } from "./move.ts";
 

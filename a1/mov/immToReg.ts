@@ -1,5 +1,5 @@
 import { getBit, getBits, twoByteNumber } from "../bitManipulation.ts";
-import { W } from "./common.ts";
+import { W } from "../common.ts";
 import { Decoder } from "./decode.ts";
 import { MOV } from "./move.ts";
 

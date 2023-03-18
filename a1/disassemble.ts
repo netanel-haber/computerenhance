@@ -4,7 +4,7 @@ import {
   immToReg,
   memToAccViceVersa,
   regMemory,
-} from "./decoders/mod.ts";
+} from "./mov/mod.ts";
 
 import { getMostSignificantBits, numBits } from "./bitManipulation.ts";
 
