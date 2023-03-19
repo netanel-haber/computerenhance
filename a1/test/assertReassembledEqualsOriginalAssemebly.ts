@@ -8,7 +8,7 @@ export const assertReassembledEqualsOriginalAssembly = async (path: string) => {
   const originalAssembly = Deno.readFileSync(path);
   const disassembled = disassemble(originalAssembly);
   const disassembledPath = `output/${basename(path)}.asm`;
-  await Deno.writeTextFile(disassembledPath, disassembled.join("\n"));
+  await Deno.writeTextFile(disassembledPath, disassembled);
   await exec(`nasm ${disassembledPath}`, { output: OutputMode.Capture });
   assertEquals(
     originalAssembly,

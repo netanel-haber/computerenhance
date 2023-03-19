@@ -7,6 +7,10 @@ import {
 } from "./mov/mod.ts";
 
 import { getMostSignificantBits, numBits } from "./bitManipulation.ts";
+import { jumps } from "./jmp/jump.ts";
+import { decodeJump, JUMP_CONSUMPTION } from "./jmp/decode.ts";
+import { ProduceLabel } from "./decode.ts";
+import { LabelProducer } from "./jmp/produceLabel.ts";
 
 const TO_REG_FROM_MEM_REG = 0b100010;
 const IMMEDIATE_TO_REGISTER = 0b1011;
@@ -20,31 +24,65 @@ const opcodeEquals = (byte: number, expected: number) =>
 
 export const disassemble = (
   binary: Uint8Array,
-): string[] => {
+): string => {
   const asm = ["bits 16\n"];
+  const INITIAL_LENGTH = asm.length;
+  const labelProducer = new LabelProducer();
+  const produceLabel: ProduceLabel = (pointer, relativeJump) =>
+    labelProducer.produce(pointer + JUMP_CONSUMPTION + relativeJump);
+
+  const consume = consumer(binary, asm, produceLabel);
+
   let pointer = 0;
-  const consume = consumer(binary, asm);
+  const consumed: number[] = [];
+  const changePointer = (newPointer: number) => {
+    consumed.push(newPointer - pointer);
+    pointer = newPointer;
+  };
+
   while (pointer < binary.length) {
     const opByte = binary[pointer];
     if (opcodeEquals(opByte, TO_REG_FROM_MEM_REG)) {
-      pointer = consume(regMemory, pointer);
+      changePointer(consume(regMemory, pointer));
       continue;
     }
     if (opcodeEquals(opByte, IMMEDIATE_TO_REGISTER)) {
-      pointer = consume(immToReg, pointer);
+      changePointer(consume(immToReg, pointer));
       continue;
     }
     if (opcodeEquals(opByte, MEMORY_TO_ACCUMULATOR_AND_VICE_VERSA)) {
-      pointer = consume(memToAccViceVersa, pointer);
+      changePointer(consume(memToAccViceVersa, pointer));
       continue;
     }
     if (opcodeEquals(opByte, IMMEDIATE_TO_REG_MEM)) {
-      pointer = consume(immToMemReg, pointer);
+      changePointer(consume(immToMemReg, pointer));
+      continue;
+    }
+    if (jumps.has(opByte)) {
+      changePointer(consume(decodeJump, pointer));
       continue;
     }
     throw new Error(
-      `Could not find decoder for byte ${toBin(opByte)}`,
+      `Could not find decoder for byte ${
+        JSON.stringify({ bin: toBin(opByte), opByte })
+      }`,
     );
   }
-  return asm;
+
+  const { labels } = labelProducer;
+  const INSTRUCTION_OFFSET = INITIAL_LENGTH - 1;
+
+  for (
+    let ins = 0, bytesCounter = 0;
+    (ins < consumed.length);
+    ins++
+  ) {
+    const label = labels.get(bytesCounter);
+    if (label) {
+      asm[ins + INSTRUCTION_OFFSET] += "\n" + label;
+    }
+    bytesCounter += consumed[ins];
+  }
+
+  return asm.join("\n");
 };

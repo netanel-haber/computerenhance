@@ -1,7 +1,16 @@
 import { twoByteNumber } from "./bitManipulation.ts";
-import { Decoder, ExtractSignedByte, ExtractSignedTwoBytes } from "./decode.ts";
+import {
+  Decoder,
+  ExtractSignedByte,
+  ExtractSignedTwoBytes,
+  ProduceLabel,
+} from "./decode.ts";
 
-export const consumer = (assembly: Uint8Array, asm: string[]) => {
+export const consumer = (
+  assembly: Uint8Array,
+  asm: string[],
+  injectLabel: ProduceLabel,
+) => {
   const nom8 = ((pointer: number) => {
     const byte = assembly[pointer];
     return byte > 127 ? byte - 256 : byte;
@@ -14,7 +23,7 @@ export const consumer = (assembly: Uint8Array, asm: string[]) => {
     decode: Decoder,
     pointer: number,
   ) => {
-    const [cmd, consumed] = decode(assembly, pointer, nom8, nom16);
+    const [cmd, consumed] = decode(assembly, pointer, nom8, nom16, injectLabel);
     asm.push(cmd);
     return pointer + consumed;
   };
