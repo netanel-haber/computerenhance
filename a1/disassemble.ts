@@ -25,8 +25,7 @@ const opcodeEquals = (byte: number, expected: number) =>
 export const disassemble = (
   binary: Uint8Array,
 ): string => {
-  const asm = ["bits 16\n"];
-  const INITIAL_LENGTH = asm.length;
+  const asm: string[] = [];
   const labelProducer = new LabelProducer();
   const produceLabel: ProduceLabel = (pointer, relativeJump) =>
     labelProducer.produce(pointer + JUMP_CONSUMPTION + relativeJump);
@@ -70,8 +69,6 @@ export const disassemble = (
   }
 
   const { labels } = labelProducer;
-  const INSTRUCTION_OFFSET = INITIAL_LENGTH - 1;
-
   for (
     let ins = 0, bytesCounter = 0;
     (ins < consumed.length);
@@ -79,10 +76,10 @@ export const disassemble = (
   ) {
     const label = labels.get(bytesCounter);
     if (label) {
-      asm[ins + INSTRUCTION_OFFSET] += "\n" + label;
+      asm[ins] = label + "\n" + asm[ins];
     }
     bytesCounter += consumed[ins];
   }
 
-  return asm.join("\n");
+  return "bits 16\n" + asm.join("\n");
 };

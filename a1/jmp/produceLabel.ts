@@ -6,7 +6,7 @@ export class LabelProducer {
     if (value) {
       return value;
     }
-    const label = `labels${this.labels.size}`;
+    const label = `label${this.labels.size}`;
     this.labels.set(absolute, label);
     return label;
   }
