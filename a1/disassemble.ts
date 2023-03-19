@@ -72,13 +72,12 @@ export const disassemble = (
   for (
     let ins = 0, bytesCounter = 0;
     (ins < consumed.length);
-    ins++
+    ins++, bytesCounter += consumed[ins]
   ) {
     const label = labels.get(bytesCounter);
     if (label) {
       asm[ins] = label + "\n" + asm[ins];
     }
-    bytesCounter += consumed[ins];
   }
 
   return "bits 16\n" + asm.join("\n");
