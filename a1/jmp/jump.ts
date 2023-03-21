@@ -23,13 +23,6 @@ export enum JumpCode {
     jcxz =      0b11100011,
 }
 
-const isJumpCode = (jc: string | JumpCode): jc is JumpCode =>
-  typeof jc === "number";
-
-export const jumps: Set<number> = new Set(
-  Object.values(JumpCode).filter(isJumpCode),
-);
-
 export type Jump = keyof typeof JumpCode;
 
 export const opcodeToJump = (op: number) => JumpCode[op] as Jump;
