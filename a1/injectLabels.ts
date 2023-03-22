@@ -1,4 +1,4 @@
-import { LabelProducer } from "./jmp/produceLabel.ts";
+import { LabelProducer } from "./jmp/LabelProducer.ts";
 
 export const injectLabels = (
   asm: string[],

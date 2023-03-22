@@ -4,7 +4,7 @@ import { consumer } from "./consumer.ts";
 import { ProduceLabel } from "./decode.ts";
 import { injectLabels } from "./injectLabels.ts";
 import { JUMP_CONSUMPTION } from "./jmp/decode.ts";
-import { LabelProducer } from "./jmp/produceLabel.ts";
+import { LabelProducer } from "./jmp/LabelProducer.ts";
 import { decodePath } from "./opcodes.ts";
 
 export const disassemble = (
