@@ -5,14 +5,9 @@ import {
   immToMemReg,
   immToReg,
   memToAccViceVersa,
+  Move,
   regMemory,
 } from "./mov/mod.ts";
-
-const mem_to_acc = 0b1010000;
-const acc_to_mem = 0b1010001;
-const imm_to_reg_mem = 0b1100011;
-const to_reg_from_mem_reg = 0b100010;
-const imm_to_reg = 0b1011;
 
 type DecoderMap = Record<number, Decoder | undefined>;
 
@@ -43,17 +38,17 @@ const opsWith8Bits: DecoderMap = {
 };
 
 const opsWith7Bits: DecoderMap = {
-  [mem_to_acc]: memToAccViceVersa,
-  [acc_to_mem]: memToAccViceVersa,
-  [imm_to_reg_mem]: immToMemReg,
+  [Move.mem_to_acc]: memToAccViceVersa,
+  [Move.acc_to_mem]: memToAccViceVersa,
+  [Move.imm_to_reg_mem]: immToMemReg,
 };
 
 const opsWith6Bits: DecoderMap = {
-  [to_reg_from_mem_reg]: regMemory,
+  [Move.to_reg_from_mem_reg]: regMemory,
 };
 
 const opsWith4Bits: DecoderMap = {
-  [imm_to_reg]: immToReg,
+  [Move.imm_to_reg]: immToReg,
 };
 
 /**
