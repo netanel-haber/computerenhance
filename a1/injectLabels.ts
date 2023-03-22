@@ -11,7 +11,7 @@ export const injectLabels = (
     (i < bytesConsumedPerInstruction.length);
     i++, bytesCounter += bytesConsumedPerInstruction[i]
   ) {
-    const label = labels.get(bytesCounter);
+    const label = labels[bytesCounter];
     if (label) {
       asm[i] = label + "\n" + asm[i];
     }
