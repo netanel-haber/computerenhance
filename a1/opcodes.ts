@@ -1,3 +1,10 @@
+import { Add, Cmp, Sub } from "./addcmpsub/addcmpsub.ts";
+import {
+  addImmToAcc,
+  cmpImmWithAcc,
+  subImmFromAcc,
+} from "./addcmpsub/imm_to_acc.ts";
+
 import { Decoder } from "./decode.ts";
 import { decodeJump } from "./jmp/decode.ts";
 import { JumpCode } from "./jmp/jump.ts";
@@ -41,6 +48,9 @@ const opsWith7Bits: DecoderMap = {
   [Move.mem_to_acc]: memToAccViceVersa,
   [Move.acc_to_mem]: memToAccViceVersa,
   [Move.imm_to_reg_mem]: immToMemReg,
+  [Add.imm_to_acc]: addImmToAcc,
+  [Sub.imm_from_acc]: subImmFromAcc,
+  [Cmp.imm_with_acc]: cmpImmWithAcc,
 };
 
 const opsWith6Bits: DecoderMap = {
