@@ -14,7 +14,9 @@ const imm_to_reg_mem = 0b1100011;
 const to_reg_from_mem_reg = 0b100010;
 const imm_to_reg = 0b1011;
 
-export const decoders8: Record<number, Decoder | undefined> = {
+type DecoderMap = Record<number, Decoder | undefined>;
+
+const opsWith8Bits: DecoderMap = {
   [JumpCode.je]: decodeJump,
   [JumpCode.jl]: decodeJump,
   [JumpCode.jle]: decodeJump,
@@ -40,16 +42,26 @@ export const decoders8: Record<number, Decoder | undefined> = {
   [JumpCode.jcxz]: decodeJump,
 };
 
-export const decoders7: Record<number, Decoder> = {
+const opsWith7Bits: DecoderMap = {
   [mem_to_acc]: memToAccViceVersa,
   [acc_to_mem]: memToAccViceVersa,
   [imm_to_reg_mem]: immToMemReg,
 };
 
-export const decoders6: Record<number, Decoder> = {
+const opsWith6Bits: DecoderMap = {
   [to_reg_from_mem_reg]: regMemory,
 };
 
-export const decoders4: Record<number, Decoder> = {
+const opsWith4Bits: DecoderMap = {
   [imm_to_reg]: immToReg,
 };
+
+/**
+ * If a decoder isn't found in each map, `opByte >>= 1|2` to arrive at next map.
+ */
+export const decodePath = [
+  [opsWith8Bits, 1],
+  [opsWith7Bits, 1],
+  [opsWith6Bits, 2],
+  [opsWith4Bits, 0],
+] as const;

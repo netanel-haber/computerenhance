@@ -35,3 +35,5 @@ export const joinAddress = (rmStr: string, value?: number) => {
   if (value > 0) return encase(`${rmStr} + ${String(value)}`);
   return encase(`${rmStr} - ${String(Math.abs(value))}`);
 };
+
+export const toBin = (b: number) => (b >>> 0).toString(2);
