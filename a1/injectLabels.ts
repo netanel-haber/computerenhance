@@ -9,7 +9,7 @@ export const injectLabels = (
   for (
     let i = 0, bytesCounter = 0;
     (i < bytesConsumedPerInstruction.length);
-    i++, bytesCounter += bytesConsumedPerInstruction[i]
+    bytesCounter += bytesConsumedPerInstruction[i++]
   ) {
     const label = labels[bytesCounter];
     if (label) {

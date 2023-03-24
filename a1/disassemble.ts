@@ -1,4 +1,3 @@
-import { toBin } from "./common.ts";
 import { consumer } from "./consumer.ts";
 
 import { ProduceLabel } from "./decode.ts";
@@ -6,6 +5,7 @@ import { injectLabels } from "./injectLabels.ts";
 import { JUMP_CONSUMPTION } from "./jmp/decode.ts";
 import { LabelProducer } from "./jmp/LabelProducer.ts";
 import { decodePath } from "./opcodes.ts";
+import { arrayToBinary } from "./test/toBinary.ts";
 
 export const disassemble = (
   binary: Uint8Array,
@@ -23,7 +23,6 @@ export const disassemble = (
   outer_loop:
   while (pointer < binary.length) {
     let opByte = binary[pointer];
-    const debugOpByte = opByte;
 
     for (const [map, shiftRight] of decodePath) {
       const decoder = map[opByte];
@@ -35,10 +34,11 @@ export const disassemble = (
       }
       opByte >>= shiftRight;
     }
+    const bytes = arrayToBinary(binary)
+      .map((b, i) => i === pointer ? `${b} <<<<` : b).join("\n");
+    console.error({ consumed, asm });
     throw new Error(
-      `Could not find decoder for byte ${
-        JSON.stringify({ bin: toBin(debugOpByte), opByte })
-      }`,
+      `Could not find decoder for byte. pointer: ${pointer}.\n${bytes}`,
     );
   }
 

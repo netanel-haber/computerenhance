@@ -7,6 +7,7 @@ import {
   getBits,
   getMostSignificantBits,
   numBits,
+  sext,
 } from "../bitManipulation.ts";
 import { cases } from "./cases.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
@@ -38,6 +39,14 @@ Deno.test("num bits", () => {
   assertEquals(numBits(0b10001000), 8);
   assertEquals(numBits(0b1000), 4);
   assertEquals(numBits(0b00001), 1);
+});
+
+Deno.test("sext", () => {
+  const num = 0b10000000;
+  const sexted = 0b1111111110000000;
+  const num2 = 0b00100000;
+  assertEquals(sext(num), sexted);
+  assertEquals(sext(num2), num2);
 });
 
 Object.entries(cases).forEach(([test, path]) => {
