@@ -17,7 +17,7 @@ import {
 } from "../common.ts";
 import { MoveDecoder } from "./types.ts";
 import { MOV } from "./render.ts";
-import { Decoder } from "../decode.ts";
+import { DecoderArgs } from "../decode.ts";
 
 export const immediateAndConsumed = (
   asm: Uint8Array,
@@ -30,9 +30,9 @@ export const immediateAndConsumed = (
   const lsb = asm[immediatePointer];
   const msb = asm[immediatePointer + 1];
 
-  // if (word && signExtend) {
-  //   return [`word ${sext(lsb)}`, offsetToImmediate + 2] as const;
-  // }
+  if (word && signExtend) {
+    return [`word ${sext(lsb)}`, offsetToImmediate + 1] as const;
+  }
 
   const immediate = word ? `word ${twoByteNumber(lsb, msb)}` : `byte ${lsb}`;
 
@@ -40,19 +40,15 @@ export const immediateAndConsumed = (
   return [immediate, consumed] as const;
 };
 
-export const immToMemReg: (
-  ...args: Parameters<Decoder>
-) => [register: string, immediate: string, consumed: number] = (
-  asm,
-  p,
-  nom8,
-  nom16,
-) => {
+export const immToMemReg = (
+  { asm, p, nom8, nom16 }: DecoderArgs,
+  signExtend: boolean,
+): [register: string, immediate: string, consumed: number] => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 
   const WORD = getBit(b1, 0);
-  const SIGN_EXTEND = bitOn(b1, 1);
+  const SIGN_EXTEND = signExtend && bitOn(b1, 1);
 
   const mode: Mode = getMostSignificantBits(b2, 6);
   assert(mode in Mode);
@@ -90,5 +86,5 @@ export const immToMemReg: (
   }
 };
 
-export const movImmToMemReg: MoveDecoder = (asm, p, nom8, nom16, _) =>
-  MOV(...immToMemReg(asm, p, nom8, nom16, _));
+export const movImmToMemReg: MoveDecoder = (args) =>
+  MOV(...immToMemReg(args, false));

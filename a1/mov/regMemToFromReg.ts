@@ -69,7 +69,7 @@ const specialCaseDirectAddress = (
   return movWithDFlag(b1, reg, encase(String(twoByte)), 4);
 };
 
-export const regMemory: MoveDecoder = (asm, p, nom8, nom16) => {
+export const regMemory: MoveDecoder = ({ asm, p, nom8, nom16 }) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
 

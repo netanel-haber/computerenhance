@@ -19,10 +19,14 @@ export type DecodedInstruction<S extends string> = readonly [
 
 export type ProduceLabel = (pointer: number, jumpTo: number) => string;
 
+export type DecoderArgs = {
+  asm: Uint8Array;
+  p: number;
+  nom8: ExtractSignedByte;
+  nom16: ExtractSignedTwoBytes;
+  produceLabel: ProduceLabel;
+};
+
 export type Decoder<S extends string = string> = (
-  assembly: Uint8Array,
-  pointer: number,
-  nom8: ExtractSignedByte,
-  nom16: ExtractSignedTwoBytes,
-  produceLabel: ProduceLabel,
+  args: DecoderArgs,
 ) => DecodedInstruction<S>;

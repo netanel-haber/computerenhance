@@ -7,7 +7,7 @@ type RenderedImmAcc = `${AddSubCmp} ${"ax" | "al"}, ${number}`;
 
 type ImmAccDecoder = Decoder<RenderedImmAcc>;
 
-const immAcc = (cmd: AddSubCmp): ImmAccDecoder => (asm, p) => {
+const immAcc = (cmd: AddSubCmp): ImmAccDecoder => ({ asm, p }) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
   const w = bitOn(b1, 0);

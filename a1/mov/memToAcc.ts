@@ -8,7 +8,7 @@ const renderAx = [
   (memory: number, consumed: number) => MOV(encase(memory), "ax", consumed),
 ];
 
-export const memToAccViceVersa: MoveDecoder = (asm, p) => {
+export const memToAccViceVersa: MoveDecoder = ({ asm, p }) => {
   const b1 = asm[p];
   const b2 = asm[p + 1];
   const w = bitOn(b1, 0);

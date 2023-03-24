@@ -9,11 +9,11 @@ type RenderedImmRegMem = `${AddSubCmp} ${string}, ${string}`;
 
 type ImmRegMemDecoder = Decoder<RenderedImmRegMem>;
 
-export const immRegMem: ImmRegMemDecoder = (asm, p, nom8, nom16, _) => {
-  const b2 = asm[p + 1];
+export const immRegMem: ImmRegMemDecoder = (args) => {
+  const b2 = args.asm[args.p + 1];
   const operation = immRegMemMiddleBits[getReg(b2)];
 
-  const [destination, source, consumed] = immToMemReg(asm, p, nom8, nom16, _);
+  const [destination, source, consumed] = immToMemReg(args, true);
 
   return [`${operation} ${destination}, ${source}`, consumed];
 };
