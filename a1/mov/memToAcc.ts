@@ -1,7 +1,7 @@
 import { bitOn, getBit, twoByteNumber } from "../common/bitManipulation.ts";
 import { encase } from "../common/common.ts";
 import { MoveDecoder } from "./types.ts";
-import { MOV } from "./render.ts";
+import { MOV } from "./regMemToFromReg.ts";
 
 const renderAx = [
   (memory: number, consumed: number) => MOV("ax", encase(memory), consumed),

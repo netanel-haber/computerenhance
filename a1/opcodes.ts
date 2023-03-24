@@ -6,6 +6,11 @@ import {
 } from "./addcmpsub/immAcc.ts";
 
 import { immRegMem } from "./addcmpsub/immRegMem.ts";
+import {
+  addRegMemRegEither,
+  cmpRegMemRegEither,
+  subRegMemRegEither,
+} from "./addcmpsub/regMemRegEither.ts";
 import { Decoder } from "./decode.ts";
 import { decodeJump } from "./jmp/decode.ts";
 import { JumpCode } from "./jmp/jump.ts";
@@ -57,8 +62,11 @@ const opsWith7Bits: DecoderMap = {
 const opsWith6Bits: DecoderMap = {
   [Move.to_reg_from_mem_reg]: regMemory,
   [Cmp.imm_reg_mem]: immRegMem,
+  [Cmp.reg_mem_reg_either]: cmpRegMemRegEither,
   [Add.imm_reg_mem]: immRegMem,
+  [Add.reg_mem_reg_either]: addRegMemRegEither,
   [Sub.imm_reg_mem]: immRegMem,
+  [Sub.reg_mem_reg_either]: subRegMemRegEither,
 };
 
 const opsWith4Bits: DecoderMap = {

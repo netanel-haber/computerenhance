@@ -1,7 +1,7 @@
 import { getBit, getBits, twoByteNumber } from "../common/bitManipulation.ts";
 import { W } from "../common/common.ts";
 import { MoveDecoder } from "./types.ts";
-import { MOV } from "./render.ts";
+import { MOV } from "./regMemToFromReg.ts";
 
 export const immToReg: MoveDecoder = ({ asm, p }) => {
   const b1 = asm[p];
