@@ -1,5 +1,5 @@
 import { assert } from "assert";
-import { getMostSignificantBits } from "../bitManipulation.ts";
+import { getMostSignificantBits } from "../common/bitManipulation.ts";
 import {
   encase,
   getReg,
@@ -9,7 +9,7 @@ import {
   Mode,
   RM_SPECIAL_CASE_DIRECT_ADDRESS,
   rmToRegister,
-} from "../common.ts";
+} from "../common/common.ts";
 import { ExtractSignedByte, ExtractSignedTwoBytes } from "../decode.ts";
 import { MoveDecoder } from "./types.ts";
 import { movWithDFlag } from "./render.ts";

@@ -1,4 +1,4 @@
-import { twoByteNumber } from "./bitManipulation.ts";
+import { twoByteNumber } from "./common/bitManipulation.ts";
 import {
   Decoder,
   ExtractSignedByte,

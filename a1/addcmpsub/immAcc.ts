@@ -1,4 +1,4 @@
-import { bitOn, twoByteNumber } from "../bitManipulation.ts";
+import { bitOn, twoByteNumber } from "../common/bitManipulation.ts";
 import { AddSubCmp } from "./addcmpsub.ts";
 
 import { Decoder } from "../decode.ts";

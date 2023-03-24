@@ -8,7 +8,7 @@ import {
   getMostSignificantBits,
   numBits,
   sext,
-} from "../bitManipulation.ts";
+} from "../common/bitManipulation.ts";
 import { cases } from "./cases.ts";
 import { assertReassembledEqualsOriginalAssembly } from "./assertReassembledEqualsOriginalAssemebly.ts";
 

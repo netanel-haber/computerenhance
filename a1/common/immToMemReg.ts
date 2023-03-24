@@ -5,7 +5,7 @@ import {
   getMostSignificantBits,
   sext,
   twoByteNumber,
-} from "../bitManipulation.ts";
+} from "./bitManipulation.ts";
 import {
   encase,
   getRm,
@@ -14,7 +14,7 @@ import {
   RM_SPECIAL_CASE_DIRECT_ADDRESS,
   rmToRegister,
   W,
-} from "../common.ts";
+} from "./common.ts";
 import { DecoderArgs } from "../decode.ts";
 
 const immediateAndConsumed = (

@@ -1,7 +1,7 @@
 import { AddSubCmp, immRegMemMiddleBits } from "./addcmpsub.ts";
 
 import { Decoder } from "../decode.ts";
-import { getReg } from "../common.ts";
+import { getReg } from "../common/common.ts";
 import { immToMemReg } from "../common/immToMemReg.ts";
 
 type RenderedImmRegMem = `${AddSubCmp} ${string}, ${string}`;

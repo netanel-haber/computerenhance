@@ -1,4 +1,4 @@
-import { bitOn } from "../bitManipulation.ts";
+import { bitOn } from "../common/bitManipulation.ts";
 import { DecodedMove } from "./types.ts";
 
 export const MOV = (
