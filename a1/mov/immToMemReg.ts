@@ -7,6 +7,7 @@ import {
   twoByteNumber,
 } from "../bitManipulation.ts";
 import {
+  encase,
   getRm,
   joinAddress,
   Mode,
@@ -19,20 +20,23 @@ import { MOV } from "./render.ts";
 import { Decoder } from "../decode.ts";
 
 export const immediateAndConsumed = (
-  immediateIsWord: number,
   asm: Uint8Array,
   pointer: number,
   offsetToImmediate: number,
+  word: number,
   signExtend: boolean,
 ) => {
   const immediatePointer = pointer + offsetToImmediate;
   const lsb = asm[immediatePointer];
   const msb = asm[immediatePointer + 1];
-  const immediate = immediateIsWord
-    ? `word ${twoByteNumber(lsb, msb)}`
-    : `byte ${signExtend ? sext(lsb) : lsb}`;
 
-  const consumed = offsetToImmediate + 1 + immediateIsWord;
+  // if (word && signExtend) {
+  //   return [`word ${sext(lsb)}`, offsetToImmediate + 2] as const;
+  // }
+
+  const immediate = word ? `word ${twoByteNumber(lsb, msb)}` : `byte ${lsb}`;
+
+  const consumed = offsetToImmediate + 1 + word;
   return [immediate, consumed] as const;
 };
 
@@ -48,6 +52,7 @@ export const immToMemReg: (
   const b2 = asm[p + 1];
 
   const WORD = getBit(b1, 0);
+  const SIGN_EXTEND = bitOn(b1, 1);
 
   const mode: Mode = getMostSignificantBits(b2, 6);
   assert(mode in Mode);
@@ -55,26 +60,32 @@ export const immToMemReg: (
   const rm = getRm(b2);
   switch (mode) {
     case Mode.REGISTER:
-      return [W[WORD][rm], ...immediateAndConsumed(WORD, asm, p, 2, false)];
+      return [
+        W[WORD][rm],
+        ...immediateAndConsumed(asm, p, 2, WORD, SIGN_EXTEND),
+      ];
     case Mode.MEMORY_NO_DISPLACEMENT:
       if (rm === RM_SPECIAL_CASE_DIRECT_ADDRESS) {
-        throw new Error("RM_SPECIAL_CASE_DIRECT_ADDRESS");
+        return [
+          encase(nom16(p + 2)),
+          ...immediateAndConsumed(asm, p, 4, WORD, SIGN_EXTEND),
+        ];
       }
       return [
         joinAddress(rmToRegister[rm]),
-        ...immediateAndConsumed(WORD, asm, p, 2, false),
+        ...immediateAndConsumed(asm, p, 2, WORD, SIGN_EXTEND),
       ];
 
     case Mode.MEMORY_8_DISPLACEMENT:
       return [
         joinAddress(rmToRegister[rm], nom8(p + 2)),
-        ...immediateAndConsumed(WORD, asm, p, 3, bitOn(b1, 1)),
+        ...immediateAndConsumed(asm, p, 3, WORD, SIGN_EXTEND),
       ];
 
     case Mode.MEMORY_16_DISPLACEMENT:
       return [
         joinAddress(rmToRegister[rm], nom16(p + 2)),
-        ...immediateAndConsumed(WORD, asm, p, 4, false),
+        ...immediateAndConsumed(asm, p, 4, WORD, SIGN_EXTEND),
       ];
   }
 };
