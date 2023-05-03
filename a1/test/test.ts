@@ -49,6 +49,6 @@ Deno.test("sext", () => {
   assertEquals(sext(num2), num2);
 });
 
-Object.entries(cases).forEach(([test, path]) => {
-  Deno.test(test, () => assertReassembledEqualsOriginalAssembly(path));
+cases.forEach(([name, path]) => {
+  Deno.test(name, () => assertReassembledEqualsOriginalAssembly(path));
 });

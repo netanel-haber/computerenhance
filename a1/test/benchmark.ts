@@ -3,9 +3,9 @@
 import { disassemble } from "../disassemble.ts";
 import { cases } from "./cases.ts";
 
-Object.values(cases).forEach((path) => {
+cases.forEach(([name, path]) => {
   const binary = Deno.readFileSync(path);
-  Deno.bench(path, () => {
+  Deno.bench(name, () => {
     disassemble(binary);
   });
 });
