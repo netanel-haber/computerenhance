@@ -34,13 +34,16 @@ const opsWith8Bits: DecoderMap = {
   [JumpCode.jo]: decodeJump,
   [JumpCode.js]: decodeJump,
   [JumpCode.jne]: decodeJump,
+  // @ts-ignore: brevity
   [JumpCode.jnz]: decodeJump,
   [JumpCode.jnl]: decodeJump,
   [JumpCode.jg]: decodeJump,
   [JumpCode.jnb]: decodeJump,
   [JumpCode.ja]: decodeJump,
   [JumpCode.jnp]: decodeJump,
+  // @ts-ignore: brevity
   [JumpCode.ja]: decodeJump,
+  // @ts-ignore: brevity
   [JumpCode.jnp]: decodeJump,
   [JumpCode.jno]: decodeJump,
   [JumpCode.jns]: decodeJump,
@@ -63,8 +66,10 @@ const opsWith6Bits: DecoderMap = {
   [Move.to_reg_from_mem_reg]: regMemory,
   [Cmp.imm_reg_mem]: immRegMem,
   [Cmp.reg_mem_reg_either]: cmpRegMemRegEither,
+  // @ts-ignore: brevity
   [Add.imm_reg_mem]: immRegMem,
   [Add.reg_mem_reg_either]: addRegMemRegEither,
+  // @ts-ignore: brevity
   [Sub.imm_reg_mem]: immRegMem,
   [Sub.reg_mem_reg_either]: subRegMemRegEither,
 };
